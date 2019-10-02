@@ -7,6 +7,8 @@ var axios = require('axios').default;
 // Create a new web application by calling the express function
 var app = express()
 
+var isStarted = false;
+
 // Tell our application to serve all the files under the `public_html` directory
 app.use(express.static('public'))
 
@@ -20,13 +22,16 @@ app.post('/data', function(request, response, next){
   axios.get(getUrl)
       .then(function (response) {
         var patientData = response.data;
-        //console.log(patientData);
+        console.log(patientData);
+        // check if the emulator has already started or not
+        if(isStarted === true ) return;
+        isStarted = true;
         // loop through the individual data and store random mock up data in the table
         setInterval(() => { 
           patientData.forEach(function(element) {
             postVitalData(element.id)
           }); 
-        }, 5000);      
+        }, 60000);      
       })
       .catch(function (error) {
           // handle error
@@ -52,7 +57,7 @@ function postVitalData(patientId){
     physicalActivity: {}
   })
   .then(function (response) {
-    //console.log(response);
+    console.log(response);
     console.log('successfully posted data')
   })
   .catch(function (error) {
